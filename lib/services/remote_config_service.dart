@@ -17,7 +17,7 @@ class RemoteConfigService {
 
       await remoteConfig.setDefaults({
         _apiKeyParam:
-            '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',
+            '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',
         _modelParam: 'llama-3.3-70b-versatile',
       });
 
