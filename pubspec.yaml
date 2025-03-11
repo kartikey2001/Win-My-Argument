@@ -1,7 +1,7 @@
 name: win_my_argument
 description: An AI-powered app to help win arguments with academic sources.
 publish_to: 'none'
-version: 0.0.2+2
+version: 0.0.3+3
 
 environment:
   sdk: ^3.5.3
