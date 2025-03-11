@@ -6,40 +6,18 @@ import 'remote_config_service.dart';
 class GroqService {
   static const String _baseUrl =
       'https://api.groq.com/openai/v1/chat/completions';
-  late RemoteConfigService _remoteConfig;
-  bool _isInitialized = false;
-
-  Future<void> _ensureInitialized() async {
-    if (!_isInitialized) {
-      _remoteConfig = await RemoteConfigService.getInstance();
-      _isInitialized = true;
-    }
-  }
-
-  String _getErrorMessage(dynamic error) {
-    if (error is http.ClientException) {
-      return 'Unable to connect to the service. Please check your internet connection.';
-    } else if (error.toString().contains('SocketException')) {
-      return 'Network connection error. Please check your internet connection and try again.';
-    } else if (error.toString().contains('TimeoutException')) {
-      return 'Request timed out. Please try again.';
-    } else {
-      // Generic error message for other cases
-      return 'An error occurred while processing your request. Please try again later.';
-    }
-  }
+  final _config = ApiConfigService.getInstance();
 
   Future<Map<String, dynamic>> getResponse(String query) async {
-    await _ensureInitialized();
     try {
       final response = await http.post(
         Uri.parse(_baseUrl),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${_remoteConfig.apiKey}',
+          'Authorization': 'Bearer ${_config.apiKey}',
         },
         body: jsonEncode({
-          'model': _remoteConfig.model,
+          'model': _config.model,
           'messages': [
             {
               'role': 'system',
@@ -77,6 +55,19 @@ class GroqService {
         print('Error in getResponse: $e');
       }
       throw _getErrorMessage(e);
+    }
+  }
+
+  String _getErrorMessage(dynamic error) {
+    if (error is http.ClientException) {
+      return 'Unable to connect to the service. Please check your internet connection.';
+    } else if (error.toString().contains('SocketException')) {
+      return 'Network connection error. Please check your internet connection and try again.';
+    } else if (error.toString().contains('TimeoutException')) {
+      return 'Request timed out. Please try again.';
+    } else {
+      // Generic error message for other cases
+      return 'An error occurred while processing your request. Please try again later.';
     }
   }
 }

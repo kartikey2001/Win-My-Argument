@@ -1,42 +1,20 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 
-class RemoteConfigService {
-  final FirebaseRemoteConfig _remoteConfig;
-  static const String _apiKeyParam = 'groq_api_key';
-  static const String _modelParam = 'groq_model';
+class ApiConfigService {
+  static ApiConfigService? _instance;
+  
+  // Direct API key and model configuration
+  static const String _apiKey = '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';
+  static const String _model = 'llama-3.3-70b-versatile';
 
-  static RemoteConfigService? _instance;
-  static Future<RemoteConfigService> getInstance() async {
-    if (_instance == null) {
-      final remoteConfig = FirebaseRemoteConfig.instance;
-      await remoteConfig.setConfigSettings(RemoteConfigSettings(
-        fetchTimeout: const Duration(minutes: 1),
-        minimumFetchInterval: const Duration(hours: 1),
-      ));
-
-      await remoteConfig.setDefaults({
-        _apiKeyParam:
-            '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',
-        _modelParam: 'llama-3.3-70b-versatile',
-      });
-
-      await remoteConfig.fetchAndActivate();
-      _instance = RemoteConfigService._(remoteConfig);
-    }
+  static ApiConfigService getInstance() {
+    instance ??= ApiConfigService.();
     return _instance!;
   }
 
-  RemoteConfigService._(this._remoteConfig);
+  ApiConfigService._();
 
-  String get apiKey => _remoteConfig.getString(_apiKeyParam);
-  String get model => _remoteConfig.getString(_modelParam);
-
-  Future<void> fetchAndActivate() async {
-    try {
-      await _remoteConfig.fetchAndActivate();
-    } catch (e) {
-      debugPrint('Error fetching remote config: $e');
-    }
-  }
+  String get apiKey => _apiKey;
+  String get model => _model;
 }
